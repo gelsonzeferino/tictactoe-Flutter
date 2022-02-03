@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img alt="TQI Loans" src="https://res.cloudinary.com/gelsoncaxopa/image/upload/v1643892075/logo-tictactoe.png" />
+    <img alt="TQI Loans" src="https://res.cloudinary.com/gelsoncaxopa/image/upload/c_scale,w_142/v1643892075/logo-tictactoe.png" />
     <br>
     Tic Tac Toe
 </h1>
