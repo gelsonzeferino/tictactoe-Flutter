@@ -1,0 +1,12 @@
+{
+    "button-newgame":"Novo Jogo",
+    "player1_Input":"Jogador 1",
+    "player2-input":"Jogador 2",
+    "game-title":"Jogo da Velha",
+    "player":"O Jogador ",
+    "won":"Venceu",
+    "rematch-button":"Revanche",
+    "exit-button":"Sair",
+    "dialog-text":"Pressione sair ou revanche para uma nova rodada",
+    "no-winner":"Deu Velha"
+}

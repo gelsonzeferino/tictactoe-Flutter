@@ -1,0 +1,12 @@
+{
+    "button-newgame":"New Game",
+    "player1_Input":"Player 1",
+    "player2-input":"Player 2","game-title":"Tic Tac Toe",
+    "player":"Player ",
+    "won":"Won",
+    "rematch-button":"Rematch",
+    "exit-button":"Quit",
+    "dialog-text":"Press quit ou rematch for a new round",
+    "no-winner":"No Winner"
+
+}
