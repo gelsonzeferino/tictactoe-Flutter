@@ -18,7 +18,7 @@ if (flutterVersionCode == null) {
 
 def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
+    flutterVersionName = '1'
 }
 
 apply plugin: 'com.android.application'
@@ -32,6 +32,8 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
  }
 
 android {
+    
+
     compileSdkVersion flutter.compileSdkVersion
 
     compileOptions {
@@ -50,10 +52,12 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.gelson.tictactoe"
-        minSdkVersion 16
-        targetSdkVersion 30
-        versionCode 1
-        versionName 'version 1.0'
+        minSdkVersion 19
+        targetSdkVersion 31
+        versionCode 3
+        versionName 'version 1.02'
+        
+         
     }
 
        signingConfigs {
@@ -67,6 +71,7 @@ android {
    buildTypes {
        release {
            signingConfig signingConfigs.release
+          
        }
    }
 }
@@ -78,3 +83,4 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
+android.buildTypes.release.ndk.debugSymbolLevel = 'FULL'

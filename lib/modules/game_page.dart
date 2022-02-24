@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:localization/localization.dart';
+import 'package:provider/provider.dart';
+import 'package:tictactoe/modules/ad_state.dart';
 
 import 'package:tictactoe/shared/themes/colors.dart';
 
@@ -14,6 +17,25 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  BannerAd? banner;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final adState = Provider.of<AdState>(context);
+
+    adState.initialization.then((status) {
+      setState(() {
+        banner = BannerAd(
+          adUnitId: adState.bannerAdUnitId,
+          size: AdSize.banner,
+          request: const AdRequest(),
+          listener: adState.adListener,
+        )..load();
+      });
+    });
+  }
+
   static const countMatrix = 3;
   static const double size = 92;
 
@@ -98,7 +120,13 @@ class _MainPageState extends State<MainPage> {
                     ),
                   ]),
             ),
-            const SizedBox(height: 100),
+            const SizedBox(height: 10),
+            if (banner == null)
+              const SizedBox(height: 50)
+            else
+              // ignore: sized_box_for_whitespace
+              Container(height: 50, child: AdWidget(ad: banner!)),
+            const SizedBox(height: 10),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: Utils.modelBuilder(matrix, (x, value) => buildRow(x)),
