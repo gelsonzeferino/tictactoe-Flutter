@@ -18,6 +18,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   BannerAd? banner;
+  BannerAd? banner2;
 
   @override
   void didChangeDependencies() {
@@ -27,6 +28,12 @@ class _MainPageState extends State<MainPage> {
     adState.initialization.then((status) {
       setState(() {
         banner = BannerAd(
+          adUnitId: adState.bannerAdUnitId,
+          size: AdSize.banner,
+          request: const AdRequest(),
+          listener: adState.adListener,
+        )..load();
+        banner2 = BannerAd(
           adUnitId: adState.bannerAdUnitId,
           size: AdSize.banner,
           request: const AdRequest(),
@@ -76,7 +83,7 @@ class _MainPageState extends State<MainPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 100),
+            const SizedBox(height: 15),
             Container(
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(5)),
@@ -131,6 +138,69 @@ class _MainPageState extends State<MainPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: Utils.modelBuilder(matrix, (x, value) => buildRow(x)),
             ),
+            const SizedBox(height: 10),
+            Player.currentPlayer == Player.X
+                ? Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5)),
+                    height: 35,
+                    width: 300,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              color: AppColors.p1,
+                              borderRadius: BorderRadius.circular(5)),
+                          height: 30,
+                          width: 280,
+                          child: Center(
+                            child: Text(
+                              "Jogador da vez: $p1",
+                              style: const TextStyle(
+                                  fontSize: 10,
+                                  fontFamily: "PressStart2P",
+                                  color: AppColors.primary),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ))
+                : Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5)),
+                    height: 35,
+                    width: 300,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              color: AppColors.p2,
+                              borderRadius: BorderRadius.circular(5)),
+                          height: 30,
+                          width: 280,
+                          child: Center(
+                            child: Text(
+                              "Jogador da vez: $p2",
+                              style: const TextStyle(
+                                  fontSize: 10,
+                                  fontFamily: "PressStart2P",
+                                  color: AppColors.primary),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
+            const SizedBox(height: 10),
+            if (banner2 == null)
+              const SizedBox(height: 50)
+            else
+              // ignore: sized_box_for_whitespace
+              Container(height: 50, child: AdWidget(ad: banner2!)),
+            const SizedBox(height: 10),
           ],
         ),
       ),
@@ -189,6 +259,7 @@ class _MainPageState extends State<MainPage> {
       setState(() {
         lastMove = newValue;
         matrix[x][y] = newValue;
+        Player.currentPlayer = newValue;
       });
 
       if (isWinner(x, y)) {
@@ -203,6 +274,7 @@ class _MainPageState extends State<MainPage> {
           );
           Player.p2score++;
         }
+        Player.score++;
       } else if (isEnd()) {
         showEndDialog(
           'no-winner'.i18n(),
@@ -235,24 +307,43 @@ class _MainPageState extends State<MainPage> {
         barrierDismissible: false,
         builder: (context) => AlertDialog(
           title: Text(title),
-          content: Text('dialog-text'.i18n()),
-          actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: AppColors.primary,
-              ),
-              onPressed: () {
-                setEmptyFields();
 
-                Navigator.of(context).pop();
-              },
-              child: Text('rematch-button'.i18n()),
-            ),
+          // ignore: sized_box_for_whitespace
+
+          content: Text('dialog-text'.i18n()),
+
+          actions: [
+            Player.score == 3
+                ? ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: AppColors.primary,
+                    ),
+                    onPressed: () {
+                      setEmptyFields();
+                      Player.p1score = 0;
+                      Player.p2score = 0;
+                      Player.score = 0;
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Nova Partida'),
+                  )
+                : ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: AppColors.primary,
+                    ),
+                    onPressed: () {
+                      setEmptyFields();
+
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('rematch-button'.i18n()),
+                  ),
             ElevatedButton(
               onPressed: () {
                 setEmptyFields();
                 Player.p1score = 0;
                 Player.p2score = 0;
+                Player.score = 0;
                 Navigator.of(context).pushReplacementNamed('home');
               },
               child: Text('exit-button'.i18n()),

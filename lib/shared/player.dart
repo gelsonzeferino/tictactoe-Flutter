@@ -6,4 +6,6 @@ class Player {
   static var player2 = '';
   static var p1score = 0;
   static var p2score = 0;
+  static var currentPlayer = '';
+  static var score = 0;
 }
