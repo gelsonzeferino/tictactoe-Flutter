@@ -4,8 +4,14 @@
     "player2-input":"Jugador 2",
     "game-title":"Tres en Raya",
     "player":"El jugador ",
-    "won":"ganó",
+    "won":"Ganó la ronda!",
+    "won-game":"Ganó el juego!",
     "rematch-button":"Revancha",
+    "new-round": "Nueva Ronda",
     "exit-button":"Salir",
-    "dialog-text":"Presione salir o revancha para una nueva ronda",
-    "no-winner":"Sin Ganador"}
+    "rematch-text":"Juguemos un juego más?",
+    "new-round-text":"Juguemos una ronda más?",
+    "no-winner":"Sin Ganador",
+    "current-player":"Jugador Actual: "
+
+}

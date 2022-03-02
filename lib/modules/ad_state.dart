@@ -7,9 +7,26 @@ class AdState {
 
   AdState(this.initialization);
 
+  String get bannerAdUnitId1 => Platform.isAndroid
+      //? 'ca-app-pub-3940256099942544/6300978111'
+      //: 'ca-app-pub-3940256099942544/6300978111';
+
+      ? 'ca-app-pub-4824006144019637/5068815077'
+      : 'ca-app-pub-4824006144019637/5068815077';
+
   String get bannerAdUnitId => Platform.isAndroid
+      //? 'ca-app-pub-3940256099942544/6300978111'
+      // : 'ca-app-pub-3940256099942544/6300978111';
+
       ? 'ca-app-pub-4824006144019637/3492764128'
       : 'ca-app-pub-4824006144019637/3492764128';
+
+  String get interstitialAdUnitId => Platform.isAndroid
+      //? 'ca-app-pub-3940256099942544/1033173712'
+      //: 'ca-app-pub-3940256099942544/1033173712';
+
+      ? 'ca-app-pub-4824006144019637/2789717233'
+      : 'ca-app-pub-4824006144019637/2789717233';
 
   BannerAdListener get adListener => _adListener;
 

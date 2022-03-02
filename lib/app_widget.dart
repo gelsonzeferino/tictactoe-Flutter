@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:localization/localization.dart';
-
 import 'modules/game_page.dart';
 import 'modules/home_page.dart';
 import 'shared/themes/colors.dart';

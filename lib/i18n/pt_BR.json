@@ -4,9 +4,13 @@
     "player2-input":"Jogador 2",
     "game-title":"Jogo da Velha",
     "player":"O Jogador ",
-    "won":"Venceu",
+    "won":"Venceu a rodada!",    
+    "won-game":"Venceu o Jogo!",
     "rematch-button":"Revanche",
+    "new-round": "Nova Rodada",
     "exit-button":"Sair",
-    "dialog-text":"Pressione sair ou revanche para uma nova rodada",
-    "no-winner":"Deu Velha"
+    "rematch-text":"Vamos jogar mais uma partida?",
+    "new-round-text":"Vamos jogar mais um Rodada?",
+    "no-winner":"Deu Velha",
+    "current-player":"Jogador da Vez: "
 }
