@@ -16,6 +16,8 @@
 This project was developed with the following technologies:
 
 -  [Flutter](https://flutter.dev/)
+-  Internationalization (PT-BR / EN-US / ES-ES)
+-  AdMob
 
 ## :memo: License
 This project is under the MIT license. See the [LICENSE](https://github.com/GelsonCaxopa/tictactoe-Flutter/blob/master/LICENSE) for more information.
