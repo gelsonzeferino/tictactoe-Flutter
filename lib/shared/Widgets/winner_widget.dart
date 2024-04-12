@@ -29,15 +29,15 @@ class WinnerWidget extends StatelessWidget {
           ListTile(
             title: Text.rich(
               TextSpan(
-                text: 'player'.i18n() + '\n' + '\n',
+                text: '${'player'.i18n()}\n\n',
                 style: (styleb),
                 children: [
-                  TextSpan(text: player + '\n', style: style),
+                  TextSpan(text: '$player\n', style: style),
                 ],
               ),
               textAlign: TextAlign.center,
             ),
-            subtitle: Player.score == 3
+            subtitle: Player.rounds == 3
                 ? Text('won-game'.i18n(),
                     textAlign: TextAlign.center, style: styleb)
                 : Text('won'.i18n(),

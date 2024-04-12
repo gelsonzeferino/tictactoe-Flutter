@@ -124,7 +124,6 @@ class _HomePageState extends State<HomePage> {
                       if (isLoaded) {
                         interstitialAd!.show();
                       }
-
                       Player.player1 = p1;
                       Player.player2 = p2;
                       Navigator.of(context).pushReplacementNamed('game_page');

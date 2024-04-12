@@ -11,6 +11,7 @@
     "exit-button":"Sair",
     "rematch-text":"Vamos jogar mais uma partida?",
     "new-round-text":"Vamos jogar mais um Rodada?",
-    "no-winner":"Deu Velha",
+    "no-winner":"velha",
     "current-player":"Jogador da Vez: "
+
 }
