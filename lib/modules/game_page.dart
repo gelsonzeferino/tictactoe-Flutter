@@ -57,7 +57,8 @@ class _MainPageState extends State<MainPage> {
   void setEmptyScoreFields() {
     Player.p1score = 0;
     Player.p2score = 0;
-    Player.score = 0;
+    Player.rounds = 0;
+    Player.velhaScore = 0;
     setEmptyFields();
   }
 
@@ -74,6 +75,7 @@ class _MainPageState extends State<MainPage> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     int p1score = Player.p1score;
     int p2score = Player.p2score;
+    int velhaScore = Player.velhaScore;
     return Scaffold(
       backgroundColor: AppColors.primary,
       appBar: AppBar(
@@ -169,7 +171,6 @@ class _MainPageState extends State<MainPage> {
 
   Widget buildRow(int x) {
     final values = matrix[x];
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: Utils.modelBuilder(
@@ -178,7 +179,6 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
-
   Color getFieldColor(String value) {
     switch (value) {
       case Player.O:
@@ -198,15 +198,25 @@ class _MainPageState extends State<MainPage> {
       margin: const EdgeInsets.all(4),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          minimumSize: const Size(size, size),
-          primary: color,
+          minimumSize: const Size(size, size), backgroundColor: color,
         ),
-        child: Text(value,
-            style: const TextStyle(
-              color: AppColors.primary,
-              fontSize: 32,
-              fontFamily: "PressStart2P",
-            )),
+        child: value == Player.none
+            ?
+             Text(
+          value,
+          style: const TextStyle(
+            color: AppColors.primary,
+            fontSize: 32,
+            fontFamily: "PressStart2P",
+          ),
+        )
+        :Image.asset(
+          value == Player.X
+              ? 'assets/${Player.X}.png' // Substitua pelo caminho da imagem do X
+              : 'assets/${Player.O}.png', // Substitua pelo caminho da imagem do O
+          width: 32,
+          height: 32,
+        ),
         onPressed: () => selectField(value, x, y),
       ),
     );
@@ -215,7 +225,6 @@ class _MainPageState extends State<MainPage> {
   void selectField(String value, int x, int y) {
     if (value == Player.none) {
       final newValue = lastMove == Player.X ? Player.O : Player.X;
-
       setState(() {
         lastMove = newValue;
         matrix[x][y] = newValue;
@@ -225,20 +234,18 @@ class _MainPageState extends State<MainPage> {
       if (isWinner(x, y)) {
         if (newValue == Player.O) {
           showEndDialog(
-            'player'.i18n() + p1 + ' ' + 'won'.i18n(),
+            '${'player'.i18n()}$p1 ${'won'.i18n()}',
           );
           Player.p1score++;
         } else if (newValue == Player.X) {
           showEndDialog(
-            'player'.i18n() + p2 + ' ' + 'won'.i18n(),
+            '${'player'.i18n()}$p2 ${'won'.i18n()}',
           );
           Player.p2score++;
         }
-        Player.score++;
+        Player.rounds++;
       } else if (isEnd()) {
-        showEndDialog(
-          'no-winner'.i18n(),
-        );
+        velha();
       }
     }
   }
@@ -262,6 +269,70 @@ class _MainPageState extends State<MainPage> {
     return row == n || col == n || diag == n || rdiag == n;
   }
 
+  Future velha() => showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.transparent,
+        title: Column(
+          children: [
+            SizedBox(
+                height: 150, width: 150, child: Image.asset('assets/${'no-winner'.i18n()}.png'))
+          ],
+        ),
+
+        // style: TextStyle(color: AppColors.p1)), ignore: sized_box_for_whitespace
+
+        content: Container(
+          decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(10)),
+          height: 40,
+          child: Center(
+              child: Player.rounds == 3
+                  ? Text('rematch-text'.i18n(),
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold))
+                  : Text('new-round-text'.i18n(),
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold))),
+        ),
+
+        actions: [
+          Player.rounds == 3
+              ? ElevatedButtonWidget(
+            primary: AppColors.p1,
+            onPressed: () {
+              setEmptyScoreFields();
+              Navigator.of(context).pop();
+            },
+            text: 'rematch-button'.i18n(),
+          )
+              : ElevatedButtonWidget(
+            onPressed: () {
+              setEmptyFields();
+              Navigator.of(context).pop();
+            },
+            text: 'new-round'.i18n(),
+            primary: AppColors.p1,
+          ),
+          ElevatedButtonWidget(
+            onPressed: () {
+              setEmptyScoreFields();
+              Navigator.of(context).pushReplacementNamed('home');
+            },
+            primary: AppColors.p2,
+            text: 'exit-button'.i18n(),
+          )
+        ],
+      ),
+  );
+
+
   Future showEndDialog(String title) => showDialog(
         context: context,
         barrierDismissible: false,
@@ -280,7 +351,7 @@ class _MainPageState extends State<MainPage> {
                       style: TextStyles.p2,
                       styleb: TextStyles.p2b,
                     )
-            ],
+                          ],
           ),
 
           // style: TextStyle(color: AppColors.p1)), ignore: sized_box_for_whitespace
@@ -291,7 +362,7 @@ class _MainPageState extends State<MainPage> {
                 borderRadius: BorderRadius.circular(10)),
             height: 40,
             child: Center(
-                child: Player.score == 3
+                child: Player.rounds == 3
                     ? Text('rematch-text'.i18n(),
                         style: const TextStyle(
                             color: Colors.white,
@@ -305,7 +376,7 @@ class _MainPageState extends State<MainPage> {
           ),
 
           actions: [
-            Player.score == 3
+            Player.rounds == 3
                 ? ElevatedButtonWidget(
                     primary: AppColors.p1,
                     onPressed: () {

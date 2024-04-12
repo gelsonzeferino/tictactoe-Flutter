@@ -10,7 +10,7 @@
     "new-round": "New Round",
     "rematch-text":"Let's play one more game?",
     "new-round-text":"Let's play one more round?",
-    "no-winner":"No Winner",
+    "no-winner":"nowinner",
     "current-player":"Current Player: "
 
 }

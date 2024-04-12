@@ -11,7 +11,6 @@
     "exit-button":"Salir",
     "rematch-text":"Juguemos un juego más?",
     "new-round-text":"Juguemos una ronda más?",
-    "no-winner":"Sin Ganador",
+    "no-winner":"nowinner",
     "current-player":"Jugador Actual: "
-
 }
