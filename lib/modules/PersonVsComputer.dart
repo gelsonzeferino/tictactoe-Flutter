@@ -8,7 +8,6 @@ import 'package:tictactoe/modules/ad_state.dart';
 import 'package:tictactoe/shared/Widgets/current_player_widget.dart';
 import 'package:tictactoe/shared/Widgets/winner_widget.dart';
 
-
 import 'package:tictactoe/shared/themes/colors.dart';
 
 import '../shared/Widgets/button_widget.dart';
@@ -16,17 +15,18 @@ import '../shared/themes/themes.dart';
 import '../shared/utils.dart';
 import '../shared/player.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+class PersonVsComputer extends StatefulWidget {
+  const PersonVsComputer({Key? key}) : super(key: key);
 
   @override
-  _MainPageState createState() => _MainPageState();
+  _PersonVsComputerState createState() => _PersonVsComputerState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _PersonVsComputerState extends State<PersonVsComputer> {
   final player = AudioPlayer();
 
   BannerAd? banner;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -64,13 +64,18 @@ class _MainPageState extends State<MainPage> {
     setEmptyFields();
   }
 
-  void setEmptyFields() => setState(() => matrix = List.generate(
-        countMatrix,
-        (_) => List.generate(countMatrix, (_) => Player.none),
-      ));
+  void setEmptyFields() => setState(() {
+        matrix = List.generate(
+          countMatrix,
+          (_) => List.generate(countMatrix, (_) => Player.none),
+        );
+        if (Player.currentPlayer == Player.X) {
+          makeComputerMove();
+        }
+      });
 
-  String p1 = Player.player1;
-  String p2 = Player.player2;
+  String p1 = Player.computer;
+  String p2 = Player.player1;
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +89,7 @@ class _MainPageState extends State<MainPage> {
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () {
             setEmptyScoreFields();
-            Navigator.of(context).pushReplacementNamed('home');
+            Navigator.of(context).pushReplacementNamed('menu');
           },
         ),
         title: Center(
@@ -180,6 +185,7 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
+
   Color getFieldColor(String value) {
     switch (value) {
       case Player.O:
@@ -197,32 +203,32 @@ class _MainPageState extends State<MainPage> {
     return Container(
       margin: const EdgeInsets.all(4),
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size(size, size), backgroundColor: color,
-        ),
-        child: value == Player.none
-            ?
-             Text(
-          value,
-          style: const TextStyle(
-            color: AppColors.primary,
-            fontSize: 32,
-            fontFamily: "PressStart2P",
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(size, size),
+            backgroundColor: color,
           ),
-        )
-        :Image.asset(
-          value == Player.X
-              ? 'assets/${Player.X}.png'
-              : 'assets/${Player.O}.png',
-          width: 32,
-          height: 32,
-        ),
-        onPressed: () {
-          selectField(value, x, y);
-        }
-      ),
+          child: value == Player.none
+              ? Text(
+                  value,
+                  style: const TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 32,
+                    fontFamily: "PressStart2P",
+                  ),
+                )
+              : Image.asset(
+                  value == Player.X
+                      ? 'assets/${Player.X}.png'
+                      : 'assets/${Player.O}.png',
+                  width: 32,
+                  height: 32,
+                ),
+          onPressed: () {
+            selectField(value, x, y);
+          }),
     );
   }
+
   void selectField(String value, int x, int y) {
     if (value == Player.none) {
       final newValue = lastMove == Player.X ? Player.O : Player.X;
@@ -235,13 +241,11 @@ class _MainPageState extends State<MainPage> {
       if (isWinner(x, y)) {
         player.play(AssetSource('win.mp3'));
         if (newValue == Player.O) {
-
           showEndDialog(
             '${'player'.i18n()}$p1 ${'won'.i18n()}',
           );
           Player.p1score++;
         } else if (newValue == Player.X) {
-
           showEndDialog(
             '${'player'.i18n()}$p2 ${'won'.i18n()}',
           );
@@ -250,6 +254,50 @@ class _MainPageState extends State<MainPage> {
         Player.rounds++;
       } else if (isEnd()) {
         velha();
+      } else {
+        if (newValue == Player.X) {
+          makeComputerMove();
+        }
+      }
+    }
+  }
+
+  void makeComputerMove() {
+    // Simples estratégia de IA: verifica se há um movimento vencedor ou um movimento para bloquear o oponente, caso contrário, faz um movimento aleatório.
+    for (int x = 0; x < countMatrix; x++) {
+      for (int y = 0; y < countMatrix; y++) {
+        if (matrix[x][y] == Player.none) {
+          // Tenta um movimento vencedor
+          matrix[x][y] = Player.X;
+          if (isWinner(x, y)) {
+            selectField(Player.none, x, y);
+            return;
+          }
+          matrix[x][y] = Player.none;
+        }
+      }
+    }
+    for (int x = 0; x < countMatrix; x++) {
+      for (int y = 0; y < countMatrix; y++) {
+        if (matrix[x][y] == Player.none) {
+          // Bloqueia um movimento vencedor do oponente
+          matrix[x][y] = Player.O;
+          if (isWinner(x, y)) {
+            matrix[x][y] = Player.X;
+            selectField(Player.none, x, y);
+            return;
+          }
+          matrix[x][y] = Player.none;
+        }
+      }
+    }
+    // Faz um movimento aleatório
+    for (int x = 0; x < countMatrix; x++) {
+      for (int y = 0; y < countMatrix; y++) {
+        if (matrix[x][y] == Player.none) {
+          selectField(Player.none, x, y);
+          return;
+        }
       }
     }
   }
@@ -271,72 +319,68 @@ class _MainPageState extends State<MainPage> {
     }
 
     return row == n || col == n || diag == n || rdiag == n;
-
   }
 
   Future velha() => showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.transparent,
-        title: Column(
-          children: [
-            SizedBox(
-                height: 150, width: 150, child: Image.asset('assets/${'no-winner'.i18n()}.png'))
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          backgroundColor: Colors.transparent,
+          title: Column(
+            children: [
+              SizedBox(
+                  height: 150,
+                  width: 150,
+                  child: Image.asset('assets/${'no-winner'.i18n()}.png'))
+            ],
+          ),
+          content: Container(
+            decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(10)),
+            height: 40,
+            child: Center(
+                child: Player.rounds == 3
+                    ? Text('rematch-text'.i18n(),
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold))
+                    : Text('new-round-text'.i18n(),
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold))),
+          ),
+          actions: [
+            Player.rounds == 3
+                ? ElevatedButtonWidget(
+                    primary: AppColors.p1,
+                    onPressed: () {
+                      setEmptyScoreFields();
+                      Navigator.of(context).pop();
+                    },
+                    text: 'rematch-button'.i18n(),
+                  )
+                : ElevatedButtonWidget(
+                    onPressed: () {
+                      setEmptyFields();
+                      Navigator.of(context).pop();
+                    },
+                    text: 'new-round'.i18n(),
+                    primary: AppColors.p1,
+                  ),
+            ElevatedButtonWidget(
+              onPressed: () {
+                setEmptyScoreFields();
+                Navigator.of(context).pushReplacementNamed('home');
+              },
+              primary: AppColors.p2,
+              text: 'exit-button'.i18n(),
+            )
           ],
         ),
-
-        // style: TextStyle(color: AppColors.p1)), ignore: sized_box_for_whitespace
-
-        content: Container(
-          decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(10)),
-          height: 40,
-          child: Center(
-              child: Player.rounds == 3
-                  ? Text('rematch-text'.i18n(),
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold))
-                  : Text('new-round-text'.i18n(),
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold))),
-        ),
-
-        actions: [
-          Player.rounds == 3
-              ? ElevatedButtonWidget(
-            primary: AppColors.p1,
-            onPressed: () {
-              setEmptyScoreFields();
-              Navigator.of(context).pop();
-            },
-            text: 'rematch-button'.i18n(),
-          )
-              : ElevatedButtonWidget(
-            onPressed: () {
-              setEmptyFields();
-              Navigator.of(context).pop();
-            },
-            text: 'new-round'.i18n(),
-            primary: AppColors.p1,
-          ),
-          ElevatedButtonWidget(
-            onPressed: () {
-              setEmptyScoreFields();
-              Navigator.of(context).pushReplacementNamed('home');
-            },
-            primary: AppColors.p2,
-            text: 'exit-button'.i18n(),
-          )
-        ],
-      ),
-  );
-
+      );
 
   Future showEndDialog(String title) => showDialog(
         context: context,
@@ -356,11 +400,8 @@ class _MainPageState extends State<MainPage> {
                       style: TextStyles.p2,
                       styleb: TextStyles.p2b,
                     )
-                          ],
+            ],
           ),
-
-          // style: TextStyle(color: AppColors.p1)), ignore: sized_box_for_whitespace
-
           content: Container(
             decoration: BoxDecoration(
                 color: AppColors.primary,
@@ -379,7 +420,6 @@ class _MainPageState extends State<MainPage> {
                             fontSize: 13,
                             fontWeight: FontWeight.bold))),
           ),
-
           actions: [
             Player.rounds == 3
                 ? ElevatedButtonWidget(

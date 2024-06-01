@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:localization/localization.dart';
+import 'modules/PersonVsComputer.dart';
 import 'modules/game_page.dart';
 import 'modules/home_page.dart';
+import 'modules/menu.dart';
 import 'shared/themes/colors.dart';
 
 class AppWidget extends StatelessWidget {
@@ -12,7 +14,7 @@ class AppWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-      title: 'Flutter Demo',
+      title: 'TicTacToe',
       supportedLocales: const [
         Locale('pt', 'BR'),
         Locale('es', 'ES'),
@@ -37,9 +39,11 @@ class AppWidget extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primarySwatch: Colors.teal, primaryColor: AppColors.primary),
-      initialRoute: "home",
+      initialRoute: "menu",
       routes: {
         "home": (context) => const HomePage(),
+        "menu": (context) => const MenuPage(),
         "game_page": (context) => const MainPage(),
+        "computer": (context) => const PersonVsComputer(),
       });
 }

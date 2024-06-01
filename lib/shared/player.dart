@@ -2,6 +2,7 @@ class Player {
   static const none = '';
   static const X = 'cross';
   static const O = 'circle';
+  static var computer = 'Computer';
   static var player1 = '';
   static var player2 = '';
   static var velhaScore = 0;

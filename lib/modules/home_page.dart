@@ -6,6 +6,7 @@ import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 import 'package:tictactoe/shared/themes/colors.dart';
 
+import '../shared/game_controller.dart';
 import '../shared/player.dart';
 import 'ad_state.dart';
 
@@ -57,6 +58,22 @@ class _HomePageState extends State<HomePage> {
     String p1 = '';
     String p2 = '';
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed('menu');
+          },
+        ),
+        title: Center(
+          child: Text(
+            'game-title'.i18n(),
+            style: const TextStyle(
+              fontFamily: "PressStart2P",
+            ),
+          ),
+        ),
+      ),
       backgroundColor: AppColors.secondary,
       body: Center(
         child: Column(
@@ -87,7 +104,10 @@ class _HomePageState extends State<HomePage> {
                           contentPadding:
                               const EdgeInsets.only(left: 10, top: 10),
                           border: InputBorder.none,
-                          suffixIcon: const Icon(Icons.circle_outlined,
+                          suffixIcon: Icon(
+                              GameController.gameMode == 'PP'
+                                  ? Icons.circle_outlined
+                                  : Icons.person,
                               color: AppColors.p1),
                           counterText: "",
                           labelText: 'player1_Input'.i18n(),
@@ -97,37 +117,77 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 10),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      //Player 2
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5)),
-                      height: 50,
-                      child: TextField(
-                        maxLength: 10,
-                        onChanged: (value) => p2 = value,
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding:
-                                const EdgeInsets.only(left: 10, top: 10),
-                            counterText: "",
-                            labelText: 'player2-input'.i18n(),
-                            suffixIcon:
-                                const Icon(Icons.close, color: AppColors.p2)),
-                      ),
-                    ),
-                  ),
+                      padding: const EdgeInsets.all(8.0),
+                      child: GameController.gameMode == 'PP'
+                          ? Container(
+                              //Player 2
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(5)),
+                              height: 50,
+                              child: TextField(
+                                maxLength: 10,
+                                onChanged: (value) => p2 = value,
+                                decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    contentPadding: const EdgeInsets.only(
+                                        left: 10, top: 10),
+                                    counterText: "",
+                                    labelText: 'player2-input'.i18n(),
+                                    suffixIcon: const Icon(Icons.close,
+                                        color: AppColors.p2)),
+                              ),
+                            )
+                          :  Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(30)),
+                                    height: 55,
+                                    width: 55,
+                                    child:  IconButton(
+                                      onPressed: () {  }, icon: const Icon(Icons.close,
+                                        color: AppColors.p2,
+                                        size: 40),
+                                    )
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(30)),
+                                  height: 55,
+                                  width: 55,
+                                  child :IconButton(
+                                    onPressed: () {  }, icon: const Icon(Icons.circle_outlined,
+                                      color: AppColors.p1,
+                                      size: 40),
+                                  )
+                                ),
+                              ],
+                            )),
                   const SizedBox(height: 15),
                   ElevatedButton(
-                    onPressed: () {
-                      if (isLoaded) {
-                        interstitialAd!.show();
-                      }
-                      Player.player1 = p1;
-                      Player.player2 = p2;
-                      Navigator.of(context).pushReplacementNamed('game_page');
-                    },
+                    onPressed:
+                       GameController.gameMode == 'PP'
+                        ? () {
+                            if (isLoaded) {
+                              interstitialAd!.show();
+                            }
+                            Player.player1 = p1;
+                            Player.player2 = p2;
+                            Navigator.of(context).pushReplacementNamed('game_page');
+                          }
+                        : () {
+                            if (isLoaded) {
+                              interstitialAd!.show();
+                            }
+                            Player.player1 = p1;
+                            Player.player2 = Player.computer;
+                            Navigator.of(context).pushReplacementNamed('computer');
+                          },
+
                     child: Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: Text(
